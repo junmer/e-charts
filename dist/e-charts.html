@@ -1,0 +1,172 @@
+<!-- Import X-Tag -->
+<script src="../../x-tag-core/src/core.js"></script>
+
+<template>
+    <div style="width:100%;height:100%" ></div>
+</template>
+
+<script>
+(function(window, document, undefined) {
+
+    // Refers to the "importer", which is index.html
+    var thatDoc = document;
+
+    // Refers to the "importee", which is src/hello-world.html
+    var thisDoc = document._currentScript.ownerDocument;
+
+    // Gets content from <template>
+    var template = thisDoc.querySelector('template').content;
+
+
+    // attr camel
+    var arrCamelAttrs = ['xAxis', 'yAxis', 'backgroundColor'];
+    var mapCamelAttrs = {};
+    arrCamelAttrs.forEach(function(attr){
+        mapCamelAttrs[attr.toLowerCase()] = attr;
+    })
+
+    /**
+     * camelAttr
+     *
+     * @inner
+     * @param  {string} attr lowerCase attr
+     * @return {string}      camel Attr
+     */
+    function camelAttr(attr) {
+        return mapCamelAttrs[attr] || attr;
+    }
+
+    /**
+     * deserialize
+     *
+     * @param  {string} value value string
+     * @return {Object}       deserialized OBJ
+     */
+    function deserialize(value) {
+        try {
+            return (new Function("return " + value)());
+        } catch (e) {
+            return value;
+        }
+    }
+
+    /**
+     * serialize
+     *
+     * @param  {Object} value value Object
+     * @return {string}       serialized OBJ
+     */
+    function serialize(value) {
+        return JSON.stringify(value);
+    }
+
+    xtag.register('e-charts', {
+        lifecycle: {
+            // Fires when an instance of the element is created
+            created: function() {
+
+                var me = this;
+
+                // Creates the shadow root
+                me.shadowRoot = me.createShadowRoot();
+
+                // Removes shadow root content
+                me.shadowRoot.innerHTML = '';
+
+                // Adds a template clone into shadow root
+                var clone = thatDoc.importNode(template, true);
+                me.shadowRoot.appendChild(clone);
+
+                me.container = me.shadowRoot.childNodes[1];
+
+                require(
+                    [
+                        'echarts',
+                        'echarts/chart/line',
+                        'echarts/chart/bar',
+                        'echarts/chart/scatter',
+                        'echarts/chart/k',
+                        'echarts/chart/pie',
+                        'echarts/chart/radar',
+                        'echarts/chart/force',
+                        'echarts/chart/chord',
+                        // 'echarts/chart/map'
+                    ],
+                    function (ec) {
+
+                        me._chart = ec.init(me.container);
+
+                        me.setOption();
+
+                    }
+                );
+
+            },
+
+            // Fires when an instance was inserted into the document
+            inserted: function() {},
+
+            // Fires when an instance was removed from the document
+            removed: function() {
+                me._chart && me._chart.dispose();
+            },
+
+            // Fires when an attribute was added, removed, or updated
+            attributeChanged: function(attr, oldVal, newVal) {
+                var opt = {};
+                opt[camelAttr(attr)] = deserialize(newVal);
+                this.setOption(opt);
+            }
+        },
+        events: {},
+        accessors: {},
+        methods: {
+            setOption: function(opt) {
+
+
+                if ( !opt ) {
+
+                    var opt = {},
+                        attrs = this.attributes;
+
+                    if ('option' in attrs) {
+                        opt = deserialize(this.getAttribute('option'));
+                    }
+                    else {
+                        Array.prototype.forEach.call(
+                            attrs,
+                            function (attr) {
+
+                                opt[camelAttr(attr.name)] = deserialize(attr.value);
+
+                            }
+                        );
+                    }
+                }
+
+                this._chart.setOption(opt);
+
+            },
+            // getOption: function(){},
+            // setSeries: function(){},
+            // getSeries: function(){},
+            // addData: function(){},
+            // on: function(){},
+            // un: function(){},
+            // connect: function(){},
+            // disConnect: function(){},
+            // showLoading: function(){},
+            // hideLoading: function(){},
+            // getDataURL: function(){},
+            // getImage: function(){},
+            // resize: function(){},
+            // refresh: function(){},
+            // restore: function(){},
+            // clear: function(){},
+            // dispose: function(){}
+        }
+    });
+
+})(window, document);
+</script>
+
