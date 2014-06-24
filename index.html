@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>&lt;e-charts&gt;</title>
+
+    <!-- Importing Web Component's Polyfill -->
+    <script src="bower_components/platform/platform.js"></script>
+
+    <!-- Importing Custom Elements -->
+    <link rel="import" href="src/e-charts.html">
+
+    <!-- require -->
+    <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-2/esl.js"></script>
+
+    <script>
+    // develop
+
+    // require.config({
+    //     'baseUrl': '',
+    //     'paths': {},
+    //     'packages': [
+    //         {
+    //             'name': 'zrender',
+    //             'location': 'bower_components/zrender/src',
+    //             'main': 'zrender'
+    //         },
+    //         {
+    //             'name': 'echarts',
+    //             'location': 'bower_components/echarts/src',
+    //             'main': 'echarts'
+    //         }
+    //     ]
+    // });
+
+    // online
+
+    var ecLocation = 'http://echarts.baidu.com/doc/example/www/js/echarts';
+    require.config({
+        'baseUrl': '',
+        'paths': {
+            'echarts': ecLocation,
+            'echarts/chart/line': ecLocation,
+            'echarts/chart/bar': ecLocation,
+            'echarts/chart/scatter': ecLocation,
+            'echarts/chart/k': ecLocation,
+            'echarts/chart/pie': ecLocation,
+            'echarts/chart/radar': ecLocation,
+            'echarts/chart/map': ecLocation,
+            'echarts/chart/chord': ecLocation,
+            'echarts/chart/force': ecLocation
+        }
+    });
+    </script>
+    <style>
+    e-charts{
+        width: 800px;
+        height: 400px;
+        display: block;
+        margin: 20px auto;
+        border: solid #ccc 1px;
+    }
+    </style>
+</head>
+<body>
+
+    <!-- Using e-charts Elements -->
+    <e-charts
+
+        title="{
+            text: '未来一周气温变化',
+            subtext: '纯属虚构'
+        }"
+
+        tooltip="{
+            trigger: 'axis'
+        }"
+
+        legend="{
+            data:['最高气温','最低气温']
+        }"
+
+        toolbox="{
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        }"
+
+        xAxis="[
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ]"
+
+        yAxis="[
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} °C'
+                },
+                splitArea : {show : true}
+            }
+        ]"
+
+        series="[
+            {
+                name:'最高气温',
+                type:'line',
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            shadowColor : 'rgba(0,0,0,0.4)',
+                            shadowBlur: 5,
+                            shadowOffsetX: 3,
+                            shadowOffsetY: 3
+                        }
+                    }
+                },
+                data:[11, 11, 15, 13, 12, 13, 10],
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'最低气温',
+                type:'line',
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            shadowColor : 'rgba(0,0,0,0.4)',
+                            shadowBlur: 5,
+                            shadowOffsetX: 3,
+                            shadowOffsetY: 3
+                        }
+                    }
+                },
+                data:[1, -2, 2, 5, 3, 2, 0],
+                markPoint : {
+                    data : [
+                        {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name : '平均值'}
+                    ]
+                }
+            }
+        ]"
+
+        calculable="true"
+    >
+    </e-charts>
+
+    <e-charts
+        option = "{
+            title : {
+                text: '罗纳尔多 vs 舍普琴科',
+                subtext: '完全实况球员数据'
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                x : 'center',
+                data:['罗纳尔多','舍普琴科']
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            polar : [
+                {
+                    indicator : [
+                        {text : '进攻', max  : 100},
+                        {text : '防守', max  : 100},
+                        {text : '体能', max  : 100},
+                        {text : '速度', max  : 100},
+                        {text : '力量', max  : 100},
+                        {text : '技巧', max  : 100}
+                    ],
+                    radius : 130
+                }
+            ],
+            series : [
+                {
+                    name: '完全实况球员数据',
+                    type: 'radar',
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                    data : [
+                        {
+                            value : [97, 42, 88, 94, 90, 86],
+                            name : '舍普琴科'
+                        },
+                        {
+                            value : [97, 32, 74, 95, 88, 92],
+                            name : '罗纳尔多'
+                        }
+                    ]
+                }
+            ]
+        }"
+    >
+    </e-charts>
+
+</body>
+</html>
